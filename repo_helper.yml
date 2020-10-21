@@ -2,7 +2,7 @@ modname: flake8-rst-docstrings-sphinx
 copyright_years: "2020"
 author: "Dominic Davis-Foster"
 email: "dominic@davis-foster.co.uk"
-version: "0.2.0"
+version: "0.0.0"
 username: "domdfcoding"
 license: 'MIT'
 short_desc: "Extension to flake8-rst-docstrings to filter out warnings related to Sphinx's built in options."

@@ -39,10 +39,8 @@ __all__ = ["Formatter", "AutodocFormatter", "ToolboxFormatter"]
 __author__ = "Dominic Davis-Foster"
 __copyright__ = "2020 Dominic Davis-Foster"
 __license__ = "MIT"
-__version__ = "0.2.0"
+__version__ = "0.0.0"
 __email__ = "dominic@davis-foster.co.uk"
-
-_allowed_rst_directives = ["envvar", "TODO", "extras-require"]
 
 
 class Formatter(BaseFormatter):
