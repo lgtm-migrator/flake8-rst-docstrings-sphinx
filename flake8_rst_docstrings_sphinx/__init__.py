@@ -125,7 +125,7 @@ class Formatter(BaseFormatter):
 	allowed_rst_directives.extend(f"py:{x}" for x in python_domain_directives)
 
 	# Sphinx reST domain
-	allowed_rst_directives.extend(f"rst:{x}" for x in ["directive", "directive:option"])
+	allowed_rst_directives.extend(f"rst:{x}" for x in ["directive", "directive:option", "role"])
 
 	# Sphinx Python domain
 	python_domain_roles = ["mod", "func", "data", "const", "class", "meth", "attr", "exc", "obj"]
