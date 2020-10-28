@@ -31,7 +31,7 @@ from configparser import ConfigParser
 from typing import List, Optional
 
 # 3rd party
-import flake8.main.cli
+import flake8.main.cli  # type: ignore
 
 # this package
 from flake8_rst_docstrings_sphinx import AutodocFormatter, Formatter, ToolboxFormatter
@@ -53,8 +53,8 @@ def main(argv: Optional[List[str]] = None) -> None:
 			default_allowed_rst_roles.extend(re.split(r"[\n,]", config["flake8"]["rst-roles"]))
 
 	parser = ArgumentParser()
-	parser.add_argument("--rst-directives", type=list, default=None)
-	parser.add_argument("--rst-roles", type=list, default=None)
+	parser.add_argument("--rst-directives", type=list, default=None)  # type: ignore
+	parser.add_argument("--rst-roles", type=list, default=None)  # type: ignore
 	parser.add_argument("--disallow-sphinx", action='store_true', default=False)
 	parser.add_argument("--allow-autodoc", action='store_true', default=False)
 	parser.add_argument("--allow-toolbox", action='store_true', default=False)  # implies allow-autodoc
