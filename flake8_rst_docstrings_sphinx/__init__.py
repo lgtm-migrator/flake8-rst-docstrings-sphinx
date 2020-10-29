@@ -31,8 +31,8 @@ import re
 from typing import Optional
 
 # 3rd party
-from flake8.formatting.base import BaseFormatter
-from flake8.style_guide import Violation
+from flake8.formatting.base import BaseFormatter  # type: ignore
+from flake8.style_guide import Violation  # type: ignore
 
 __all__ = ["Formatter", "AutodocFormatter", "ToolboxFormatter"]
 
