@@ -55,9 +55,9 @@ def main(argv: Optional[List[str]] = None) -> None:
 	parser = ArgumentParser()
 	parser.add_argument("--rst-directives", type=list, default=None)  # type: ignore
 	parser.add_argument("--rst-roles", type=list, default=None)  # type: ignore
-	parser.add_argument("--disallow-sphinx", action='store_true', default=False)
-	parser.add_argument("--allow-autodoc", action='store_true', default=False)
-	parser.add_argument("--allow-toolbox", action='store_true', default=False)  # implies allow-autodoc
+	parser.add_argument("--disallow-sphinx", action="store_true", default=False)
+	parser.add_argument("--allow-autodoc", action="store_true", default=False)
+	parser.add_argument("--allow-toolbox", action="store_true", default=False)  # implies allow-autodoc
 
 	if argv is None:
 		argv = sys.argv[1:]
