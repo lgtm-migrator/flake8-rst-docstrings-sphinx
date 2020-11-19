@@ -194,5 +194,10 @@ class ToolboxFormatter(AutodocFormatter):
 			]
 
 	allowed_rst_directives = [
-			*AutodocFormatter.allowed_rst_directives, "rest-example", "extensions", "confval", "pre-commit-shield"
+			*AutodocFormatter.allowed_rst_directives,
+			"rest-example",
+			"extensions",
+			"confval",
+			"pre-commit-shield",
+			"prompt",
 			]
