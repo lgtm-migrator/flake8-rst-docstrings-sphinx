@@ -43,7 +43,7 @@ import click
 import flake8.main.application  # type: ignore
 
 # this package
-from flake8_rst_docstrings_sphinx.domains import Autodoc, Builtin, Toolbox
+from flake8_rst_docstrings_sphinx.domains import Autodoc, Builtin, Domain, Toolbox
 
 __all__ = ["Application", "compile_options"]
 
@@ -151,6 +151,8 @@ def compile_options(
 		if "rst-roles" in config["flake8"]:
 			default_allowed_rst_roles.extend(re.split(r"[\n,]", config["flake8"]["rst-roles"]))
 
+	domain: Domain
+
 	if allow_toolbox:
 		domain = Toolbox()
 	elif allow_autodoc:
@@ -159,9 +161,9 @@ def compile_options(
 		domain = Builtin()
 
 	if rst_roles is None:
-		rst_roles = sorted({*default_allowed_rst_roles, domain.roles})
+		rst_roles = sorted({*default_allowed_rst_roles, *domain.roles})
 
 	if rst_directives is None:
-		rst_directives = sorted({*default_allowed_rst_directives, domain.directives})
+		rst_directives = sorted({*default_allowed_rst_directives, *domain.directives})
 
 	return rst_roles, rst_directives
