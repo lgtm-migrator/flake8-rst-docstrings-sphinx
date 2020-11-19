@@ -25,16 +25,27 @@ Extension to flake8-rst-docstrings to filter out warnings related to Sphinx's bu
 #  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 #  THE SOFTWARE.
 #
+#  "Application" based on Flake8
+#  Copyright (C) 2011-2013 Tarek Ziade <tarek@ziade.org>
+#  Copyright (C) 2012-2016 Ian Cordasco <graffatcolmingov@gmail.com>
+#  MIT Licensed
+#
 
 # stdlib
 import re
-from typing import Optional
+from configparser import ConfigParser
+from functools import partial
+from gettext import ngettext
+from typing import List, Optional, Tuple
 
 # 3rd party
-from flake8.formatting.base import BaseFormatter  # type: ignore
-from flake8.style_guide import Violation  # type: ignore
+import click
+import flake8.main.application  # type: ignore
 
-__all__ = ["Formatter", "AutodocFormatter", "ToolboxFormatter"]
+# this package
+from flake8_rst_docstrings_sphinx.domains import Autodoc, Builtin, Toolbox
+
+__all__ = ["Application", "compile_options"]
 
 __author__ = "Dominic Davis-Foster"
 __copyright__ = "2020 Dominic Davis-Foster"
@@ -42,162 +53,115 @@ __license__ = "MIT"
 __version__ = "0.0.0"
 __email__ = "dominic@davis-foster.co.uk"
 
+_error = partial(ngettext, "error", "errors")
+_file = partial(ngettext, "file", "files")
 
-class Formatter(BaseFormatter):
 
-	error_format = "%(path)s:%(row)d:%(col)d: %(code)s %(text)s"
+class Application(flake8.main.application.Application):
+	"""
+	Subclass of Flake8's ``Application``.
+	"""
 
-	allow_autodoc = False
-	allow_toolbox = False
-
-	allowed_rst_roles = []
-
-	# Sphinx built in
-	allowed_rst_roles.extend([
-			"any",
-			"ref",
-			"doc",
-			"download",
-			"numref",
-			"envvar",
-			"keyword",
-			"option",
-			"term",
-			"math",
-			"eq",
-			"abbr",
-			"command",
-			"dfn",
-			"file",
-			"guilabel",
-			"kbd",
-			"mailheader",
-			"menuselection",
-			"mimetype",
-			"samp",
-			"pep",
-			"rfc",
-			"index",
-			])
-
-	allowed_rst_directives = []
-
-	# Sphinx built in
-	allowed_rst_directives.extend([
-			"toctree",
-			"note",
-			"warning",
-			"versionadded",
-			"versionchanged",
-			"deprecated",
-			"seealso",
-			"rubric",
-			"centered",
-			"hlist",
-			"highlight",
-			"code-block",
-			"literalinclude",
-			"glossary",
-			"sectionauthor",
-			"codeauthor",
-			"index",
-			"only",
-			"tabularcolumns",
-			"math",
-			"productionlist",
-			])
-
-	# Sphinx Python domain
-	python_domain_directives = [
-			"module",
-			"function",
-			"data",
-			"exception",
-			"class",
-			"attribute",
-			"method",
-			"staticmethod",
-			"classmethod",
-			"decorator",
-			"decoratormethod",
-			]
-	allowed_rst_directives.extend(python_domain_directives)
-	allowed_rst_directives.extend(f"py:{x}" for x in python_domain_directives)
-
-	# Sphinx reST domain
-	allowed_rst_directives.extend(f"rst:{x}" for x in ["directive", "directive:option", "role"])
-
-	# Sphinx Python domain
-	python_domain_roles = ["mod", "func", "data", "const", "class", "meth", "attr", "exc", "obj"]
-	allowed_rst_roles.extend(python_domain_roles)
-	allowed_rst_roles.extend(f"py:{x}" for x in python_domain_roles)
-
-	# Sphinx reST domain
-	allowed_rst_roles.extend(f"rst:{x}" for x in ["dir", "role"])
-
-	def handle(self, error: Violation):
-
-		if error.code == "RST304":
-			m = re.match(r'Unknown interpreted text role "(.*)"\.', error.text)
-			if m:
-				if m.group(1) in self.allowed_rst_roles:
-					return
-
-		elif error.code == "RST303":
-			m = re.match(r'Unknown directive type "(.*)"\.', error.text)
-			if m:
-				if m.group(1) in self.allowed_rst_directives:
-					return
-
-		super().handle(error)
-
-	def format(self, error: Violation) -> Optional[str]:
+	def exit(self) -> None:
 		"""
-		Format and write error out.
+		Handle finalization and exiting the program.
 
-		If an output filename is specified, write formatted errors to that
-		file. Otherwise, print the formatted error to standard out.
+		This should be the last thing called on the application instance.
+		It will check certain options and exit appropriately.
 		"""
 
-		return self.error_format % {
-				"code": error.code,
-				"text": error.text,
-				"path": error.filename,
-				"row": error.line_number,
-				"col": error.column_number,
-				}
+		if self.options.count:
+			files_checked = self.file_checker_manager.statistics["files"]
+			files_with_errors = self.file_checker_manager.statistics["files_with_errors"]
+			if self.result_count:
+				click.echo(
+						f"Found {self.result_count} {_error(self.result_count)} "
+						f"in {files_with_errors} {_file(files_with_errors)} "
+						f"(checked {files_checked} source {_file(files_checked)})"
+						)
+			else:
+				click.echo(f"Success: no issues found in {files_checked} source {_file(files_checked)}")
+
+		if self.options.exit_zero:
+			raise SystemExit(self.catastrophic_failure)
+		else:
+			raise SystemExit((self.result_count > 0) or self.catastrophic_failure)
+
+	def report_errors(self) -> None:
+		"""
+		Report all the errors found by flake8 3.0.
+
+		This also updates the :attr:`result_count` attribute with the total
+		number of errors, warnings, and other messages found.
+		"""
+
+		flake8.main.application.LOG.info("Reporting errors")
+
+		files_with_errors = results_reported = results_found = 0
+
+		for checker in self.file_checker_manager._all_checkers:
+			results_ = sorted(checker.results, key=lambda tup: (tup[1], tup[2]))
+			filename = checker.display_name
+
+			with self.file_checker_manager.style_guide.processing_file(filename):
+				results_reported_for_file = self.file_checker_manager._handle_results(filename, results_)
+				if results_reported_for_file:
+					results_reported += results_reported_for_file
+					files_with_errors += 1
+
+			results_found += len(results_)
+
+		results: Tuple[int, int] = (results_found, results_reported)
+
+		self.total_result_count, self.result_count = results
+		flake8.main.application.LOG.info(
+				"Found a total of %d violations and reported %d",
+				self.total_result_count,
+				self.result_count,
+				)
+
+		self.file_checker_manager.statistics["files_with_errors"] = files_with_errors
 
 
-class AutodocFormatter(Formatter):
+def compile_options(
+		rst_roles: Optional[List[str]],
+		rst_directives: Optional[List[str]],
+		*,
+		allow_autodoc: bool = False,
+		allow_toolbox: bool = False,
+		):
+	"""
+	Compile the list of allowed roles and directives.
 
-	allow_autodoc = True
+	:param rst_roles:
+	:param rst_directives:
+	:param allow_autodoc:
+	:param allow_toolbox:
+	"""
 
-	allowed_rst_directives = [
-			*Formatter.allowed_rst_directives, "autoclass", "autofunction", "autodata", "automethod"
-			]
+	default_allowed_rst_directives = []
+	default_allowed_rst_roles = []
 
+	config = ConfigParser()
+	config.read("tox.ini")
 
-class ToolboxFormatter(AutodocFormatter):
+	if "flake8" in config:
+		if "rst-directives" in config["flake8"]:
+			default_allowed_rst_directives.extend(re.split(r"[\n,]", config["flake8"]["rst-directives"]))
+		if "rst-roles" in config["flake8"]:
+			default_allowed_rst_roles.extend(re.split(r"[\n,]", config["flake8"]["rst-roles"]))
 
-	allow_toolbox = True
+	if allow_toolbox:
+		domain = Toolbox()
+	elif allow_autodoc:
+		domain = Autodoc()
+	else:
+		domain = Builtin()
 
-	allowed_rst_roles = [
-			*AutodocFormatter.allowed_rst_roles,
-			"wikipedia",
-			"pull",
-			"issue",
-			"asset",
-			"confval",
-			"data",
-			"deco",
-			"regex"
-			]
+	if rst_roles is None:
+		rst_roles = sorted({*default_allowed_rst_roles, domain.roles})
 
-	allowed_rst_directives = [
-			*AutodocFormatter.allowed_rst_directives,
-			"rest-example",
-			"extensions",
-			"confval",
-			"pre-commit-shield",
-			"prompt",
-			]
+	if rst_directives is None:
+		rst_directives = sorted({*default_allowed_rst_directives, domain.directives})
+
+	return rst_roles, rst_directives
