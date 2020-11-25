@@ -26,7 +26,7 @@ flake8-rst-docstrings-sphinx
 
 
 .. |travis| image:: https://github.com/domdfcoding/flake8-rst-docstrings-sphinx/workflows/Linux%20Tests/badge.svg
-	:target: https://github.com/domdfcoding/flake8-rst-docstrings-sphinx/actions?query=workflow%3A%Linux+Tests%22
+	:target: https://github.com/domdfcoding/flake8-rst-docstrings-sphinx/actions?query=workflow%3A%22Linux+Tests%22
 	:alt: Linux Test Status
 
 .. |actions_windows| image:: https://github.com/domdfcoding/flake8-rst-docstrings-sphinx/workflows/Windows%20Tests/badge.svg
