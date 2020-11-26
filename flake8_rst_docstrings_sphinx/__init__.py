@@ -25,27 +25,18 @@ Extension to flake8-rst-docstrings to filter out warnings related to Sphinx's bu
 #  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 #  THE SOFTWARE.
 #
-#  "Application" based on Flake8
-#  Copyright (C) 2011-2013 Tarek Ziade <tarek@ziade.org>
-#  Copyright (C) 2012-2016 Ian Cordasco <graffatcolmingov@gmail.com>
-#  MIT Licensed
-#
 
 # stdlib
 import re
 from configparser import ConfigParser
 from functools import partial
 from gettext import ngettext
-from typing import List, Optional, Tuple
-
-# 3rd party
-import click
-import flake8.main.application  # type: ignore
+from typing import List, Optional
 
 # this package
 from flake8_rst_docstrings_sphinx.domains import Autodoc, Builtin, Domain, Toolbox
 
-__all__ = ["Application", "compile_options"]
+__all__ = ["compile_options"]
 
 __author__ = "Dominic Davis-Foster"
 __copyright__ = "2020 Dominic Davis-Foster"
@@ -55,72 +46,6 @@ __email__ = "dominic@davis-foster.co.uk"
 
 _error = partial(ngettext, "error", "errors")
 _file = partial(ngettext, "file", "files")
-
-
-class Application(flake8.main.application.Application):
-	"""
-	Subclass of Flake8's ``Application``.
-	"""
-
-	def exit(self) -> None:
-		"""
-		Handle finalization and exiting the program.
-
-		This should be the last thing called on the application instance.
-		It will check certain options and exit appropriately.
-		"""
-
-		if self.options.count:
-			files_checked = self.file_checker_manager.statistics["files"]
-			files_with_errors = self.file_checker_manager.statistics["files_with_errors"]
-			if self.result_count:
-				click.echo(
-						f"Found {self.result_count} {_error(self.result_count)} "
-						f"in {files_with_errors} {_file(files_with_errors)} "
-						f"(checked {files_checked} source {_file(files_checked)})"
-						)
-			else:
-				click.echo(f"Success: no issues found in {files_checked} source {_file(files_checked)}")
-
-		if self.options.exit_zero:
-			raise SystemExit(self.catastrophic_failure)
-		else:
-			raise SystemExit((self.result_count > 0) or self.catastrophic_failure)
-
-	def report_errors(self) -> None:
-		"""
-		Report all the errors found by flake8 3.0.
-
-		This also updates the :attr:`result_count` attribute with the total
-		number of errors, warnings, and other messages found.
-		"""
-
-		flake8.main.application.LOG.info("Reporting errors")
-
-		files_with_errors = results_reported = results_found = 0
-
-		for checker in self.file_checker_manager._all_checkers:
-			results_ = sorted(checker.results, key=lambda tup: (tup[1], tup[2]))
-			filename = checker.display_name
-
-			with self.file_checker_manager.style_guide.processing_file(filename):
-				results_reported_for_file = self.file_checker_manager._handle_results(filename, results_)
-				if results_reported_for_file:
-					results_reported += results_reported_for_file
-					files_with_errors += 1
-
-			results_found += len(results_)
-
-		results: Tuple[int, int] = (results_found, results_reported)
-
-		self.total_result_count, self.result_count = results
-		flake8.main.application.LOG.info(
-				"Found a total of %d violations and reported %d",
-				self.total_result_count,
-				self.result_count,
-				)
-
-		self.file_checker_manager.statistics["files_with_errors"] = files_with_errors
 
 
 def compile_options(

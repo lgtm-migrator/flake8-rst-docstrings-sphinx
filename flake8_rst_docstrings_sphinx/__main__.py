@@ -34,8 +34,11 @@ from consolekit.options import MultiValueOption
 
 __all__ = ["main"]
 
+# 3rd party
+from flake8_prettycount.application import Application
+
 # this package
-from flake8_rst_docstrings_sphinx import Application, compile_options
+from flake8_rst_docstrings_sphinx import compile_options
 
 
 @click.option(
