@@ -34,9 +34,12 @@ class Domain:
 	Represents a Sphinx domain.
 	"""
 
+	roles: Set[str] = set()
+	directives: Set[str] = set()
+
 	def __init__(self):
-		self.roles: Set[str] = set()
-		self.directives: Set[str] = set()
+		self.roles = set(self.roles)
+		self.directives = set(self.directives)
 
 
 class Python(Domain):
