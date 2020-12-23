@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 #
 #  __main__.py
+"""
+CLI entry point.
+"""
 #
 #  Copyright (c) 2020 Dominic Davis-Foster <dominic@davis-foster.co.uk>
 #
@@ -57,7 +60,7 @@ class Application(flake8.main.application.Application):
 	Subclass of Flake8's ``Application``.
 	"""
 
-	def exit(self) -> None:
+	def exit(self) -> None:  # noqa: A003  # pylint: disable=redefined-builtin
 		"""
 		Handle finalization and exiting the program.
 

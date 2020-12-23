@@ -44,6 +44,9 @@ __email__ = "dominic@davis-foster.co.uk"
 
 
 class Formatter(BaseFormatter):
+	"""
+	Custom Flake8 formatter.
+	"""
 
 	error_format = "%(path)s:%(row)d:%(col)d: %(code)s %(text)s"
 
@@ -135,7 +138,7 @@ class Formatter(BaseFormatter):
 	# Sphinx reST domain
 	allowed_rst_roles.extend(f"rst:{x}" for x in ["dir", "role"])
 
-	def handle(self, error: Violation):
+	def handle(self, error: Violation):  # noqa: D102
 
 		if error.code == "RST304":
 			m = re.match(r'Unknown interpreted text role "(.*)"\.', error.text)
@@ -151,7 +154,7 @@ class Formatter(BaseFormatter):
 
 		super().handle(error)
 
-	def format(self, error: Violation) -> Optional[str]:
+	def format(self, error: Violation) -> Optional[str]:  # noqa: A003  # pylint: disable=redefined-builtin
 		"""
 		Format and write error out.
 
@@ -168,7 +171,7 @@ class Formatter(BaseFormatter):
 				}
 
 
-class AutodocFormatter(Formatter):
+class AutodocFormatter(Formatter):  # noqa: D101
 
 	allow_autodoc = True
 
@@ -177,7 +180,7 @@ class AutodocFormatter(Formatter):
 			]
 
 
-class ToolboxFormatter(AutodocFormatter):
+class ToolboxFormatter(AutodocFormatter):  # noqa: D101
 
 	allow_toolbox = True
 
