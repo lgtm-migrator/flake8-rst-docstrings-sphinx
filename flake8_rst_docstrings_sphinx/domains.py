@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 #
 #  domains.py
+"""
+Different Sphinx domains, controlling the permitted roles and directives.
+"""
 #
 #  Copyright (c) 2020 Dominic Davis-Foster <dominic@davis-foster.co.uk>
 #
@@ -157,7 +160,7 @@ class Autodoc(Builtin):
 
 class Toolbox(Autodoc):
 	"""
-	Represents the roles and directives added by `sphinx-toolbox <https://sphinx-toolbox.readthedocs.io>`_
+	Represents the roles and directives added by `sphinx-toolbox <https://sphinx-toolbox.readthedocs.io>`_ .
 	"""
 
 	def __init__(self):
