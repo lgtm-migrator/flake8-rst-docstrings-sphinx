@@ -28,13 +28,15 @@ Extension to flake8-rst-docstrings to filter out warnings related to Sphinx's bu
 
 # stdlib
 import re
-from typing import Optional
+from configparser import ConfigParser
+from functools import partial
+from gettext import ngettext
+from typing import List, Optional
 
-# 3rd party
-from flake8.formatting.base import BaseFormatter  # type: ignore
-from flake8.style_guide import Violation  # type: ignore
+# this package
+from flake8_rst_docstrings_sphinx.domains import Autodoc, Builtin, Domain, Toolbox
 
-__all__ = ["Formatter", "AutodocFormatter", "ToolboxFormatter"]
+__all__ = ["compile_options"]
 
 __author__ = "Dominic Davis-Foster"
 __copyright__ = "2020 Dominic Davis-Foster"
@@ -42,165 +44,51 @@ __license__ = "MIT"
 __version__ = "0.0.0"
 __email__ = "dominic@davis-foster.co.uk"
 
+_error = partial(ngettext, "error", "errors")
+_file = partial(ngettext, "file", "files")
 
-class Formatter(BaseFormatter):
+
+def compile_options(
+		rst_roles: Optional[List[str]],
+		rst_directives: Optional[List[str]],
+		*,
+		allow_autodoc: bool = False,
+		allow_toolbox: bool = False,
+		):
 	"""
-	Custom Flake8 formatter.
+	Compile the list of allowed roles and directives.
+
+	:param rst_roles:
+	:param rst_directives:
+	:param allow_autodoc:
+	:param allow_toolbox:
 	"""
 
-	error_format = "%(path)s:%(row)d:%(col)d: %(code)s %(text)s"
+	default_allowed_rst_directives = []
+	default_allowed_rst_roles = []
 
-	allow_autodoc = False
-	allow_toolbox = False
+	config = ConfigParser()
+	config.read("tox.ini")
 
-	allowed_rst_roles = []
+	if "flake8" in config:
+		if "rst-directives" in config["flake8"]:
+			default_allowed_rst_directives.extend(re.split(r"[\n,]", config["flake8"]["rst-directives"]))
+		if "rst-roles" in config["flake8"]:
+			default_allowed_rst_roles.extend(re.split(r"[\n,]", config["flake8"]["rst-roles"]))
 
-	# Sphinx built in
-	allowed_rst_roles.extend([
-			"any",
-			"ref",
-			"doc",
-			"download",
-			"numref",
-			"envvar",
-			"keyword",
-			"option",
-			"term",
-			"math",
-			"eq",
-			"abbr",
-			"command",
-			"dfn",
-			"file",
-			"guilabel",
-			"kbd",
-			"mailheader",
-			"menuselection",
-			"mimetype",
-			"samp",
-			"pep",
-			"rfc",
-			"index",
-			])
+	domain: Domain
 
-	allowed_rst_directives = []
+	if allow_toolbox:
+		domain = Toolbox()
+	elif allow_autodoc:
+		domain = Autodoc()
+	else:
+		domain = Builtin()
 
-	# Sphinx built in
-	allowed_rst_directives.extend([
-			"toctree",
-			"note",
-			"warning",
-			"versionadded",
-			"versionchanged",
-			"deprecated",
-			"seealso",
-			"rubric",
-			"centered",
-			"hlist",
-			"highlight",
-			"code-block",
-			"literalinclude",
-			"glossary",
-			"sectionauthor",
-			"codeauthor",
-			"index",
-			"only",
-			"tabularcolumns",
-			"math",
-			"productionlist",
-			])
+	if rst_roles is None:
+		rst_roles = sorted({*default_allowed_rst_roles, *domain.roles})
 
-	# Sphinx Python domain
-	python_domain_directives = [
-			"module",
-			"function",
-			"data",
-			"exception",
-			"class",
-			"attribute",
-			"method",
-			"staticmethod",
-			"classmethod",
-			"decorator",
-			"decoratormethod",
-			]
-	allowed_rst_directives.extend(python_domain_directives)
-	allowed_rst_directives.extend(f"py:{x}" for x in python_domain_directives)
+	if rst_directives is None:
+		rst_directives = sorted({*default_allowed_rst_directives, *domain.directives})
 
-	# Sphinx reST domain
-	allowed_rst_directives.extend(f"rst:{x}" for x in ["directive", "directive:option", "role"])
-
-	# Sphinx Python domain
-	python_domain_roles = ["mod", "func", "data", "const", "class", "meth", "attr", "exc", "obj"]
-	allowed_rst_roles.extend(python_domain_roles)
-	allowed_rst_roles.extend(f"py:{x}" for x in python_domain_roles)
-
-	# Sphinx reST domain
-	allowed_rst_roles.extend(f"rst:{x}" for x in ["dir", "role"])
-
-	def handle(self, error: Violation):  # noqa: D102
-
-		if error.code == "RST304":
-			m = re.match(r'Unknown interpreted text role "(.*)"\.', error.text)
-			if m:
-				if m.group(1) in self.allowed_rst_roles:
-					return
-
-		elif error.code == "RST303":
-			m = re.match(r'Unknown directive type "(.*)"\.', error.text)
-			if m:
-				if m.group(1) in self.allowed_rst_directives:
-					return
-
-		super().handle(error)
-
-	def format(self, error: Violation) -> Optional[str]:  # noqa: A003  # pylint: disable=redefined-builtin
-		"""
-		Format and write error out.
-
-		If an output filename is specified, write formatted errors to that
-		file. Otherwise, print the formatted error to standard out.
-		"""
-
-		return self.error_format % {
-				"code": error.code,
-				"text": error.text,
-				"path": error.filename,
-				"row": error.line_number,
-				"col": error.column_number,
-				}
-
-
-class AutodocFormatter(Formatter):  # noqa: D101
-
-	allow_autodoc = True
-
-	allowed_rst_directives = [
-			*Formatter.allowed_rst_directives, "autoclass", "autofunction", "autodata", "automethod"
-			]
-
-
-class ToolboxFormatter(AutodocFormatter):  # noqa: D101
-
-	allow_toolbox = True
-
-	allowed_rst_roles = [
-			*AutodocFormatter.allowed_rst_roles,
-			"wikipedia",
-			"pull",
-			"issue",
-			"asset",
-			"confval",
-			"data",
-			"deco",
-			"regex"
-			]
-
-	allowed_rst_directives = [
-			*AutodocFormatter.allowed_rst_directives,
-			"rest-example",
-			"extensions",
-			"confval",
-			"pre-commit-shield",
-			"prompt",
-			]
+	return rst_roles, rst_directives
