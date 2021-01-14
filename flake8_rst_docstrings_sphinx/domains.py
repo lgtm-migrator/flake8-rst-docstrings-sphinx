@@ -88,7 +88,7 @@ class Rest(Domain):
 		self.roles.update(f"rst:{x}" for x in ["dir", "role"])
 
 
-class Builtin(Python, Rest):
+class Builtin(Python, Rest):  # lgtm [py/multiple-calls-to-init]
 	"""
 	Represents Sphinx's builtin roles and directives.
 	"""
