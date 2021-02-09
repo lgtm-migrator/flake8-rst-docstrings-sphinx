@@ -9,10 +9,6 @@ username: "domdfcoding"
 license: 'MIT'
 short_desc: "Extension to flake8-rst-docstrings to filter out warnings related to Sphinx's built in options."
 
-conda_channels:
- - domdfcoding
- - conda-forge
-
 enable_tests: false
 enable_conda: false
 enable_docs: false
@@ -28,12 +24,8 @@ python_versions:
  - '3.9'
  - 3.10-dev
  - pypy3
- - rustpython
 
 classifiers:
  - 'Development Status :: 4 - Beta'
-#  - "Development Status :: 5 - Production/Stable"
-#  - "Development Status :: 6 - Mature"
-#  - "Development Status :: 7 - Inactive"
  - 'Intended Audience :: Developers'
  - "Topic :: Utilities"
