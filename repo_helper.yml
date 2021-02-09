@@ -1,3 +1,5 @@
+# Configuration for 'repo_helper' (https://github.com/domdfcoding/repo_helper)
+---
 modname: flake8-rst-docstrings-sphinx
 copyright_years: "2020-2021"
 author: "Dominic Davis-Foster"
@@ -8,29 +10,30 @@ license: 'MIT'
 short_desc: "Extension to flake8-rst-docstrings to filter out warnings related to Sphinx's built in options."
 
 conda_channels:
-  - domdfcoding
-  - conda-forge
+ - domdfcoding
+ - conda-forge
 
-enable_tests: False
-enable_conda: False
-enable_docs: False
-on_pypi: False
+enable_tests: false
+enable_conda: false
+enable_docs: false
+on_pypi: false
 
 python_deploy_version: 3.6
 
 # Versions to run tests for
 python_versions:
-  - '3.6'
-  - '3.7'
-  - "3.8"
-  - "3.9"
-  - "3.10-dev"
-  - "pypy3"
+ - '3.6'
+ - '3.7'
+ - '3.8'
+ - '3.9'
+ - 3.10-dev
+ - pypy3
+ - rustpython
 
 classifiers:
-  - 'Development Status :: 4 - Beta'
+ - 'Development Status :: 4 - Beta'
 #  - "Development Status :: 5 - Production/Stable"
 #  - "Development Status :: 6 - Mature"
 #  - "Development Status :: 7 - Inactive"
-  - 'Intended Audience :: Developers'
-  - "Topic :: Utilities"
+ - 'Intended Audience :: Developers'
+ - "Topic :: Utilities"
