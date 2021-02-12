@@ -155,7 +155,7 @@ class Autodoc(Builtin):
 
 	def __init__(self):
 		super().__init__()
-		self.directives.update(("autoclass", "autofunction", "autodata", "automethod"))
+		self.directives.update(("autoclass", "autofunction", "autodata", "automethod", "autosummary"))
 
 
 class Toolbox(Autodoc):
