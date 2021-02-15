@@ -124,6 +124,7 @@ class Builtin(Python, Rest):  # lgtm [py/multiple-calls-to-init]
 				"index",
 				})
 		self.directives.update({
+				"download",
 				"toctree",
 				"note",
 				"warning",
