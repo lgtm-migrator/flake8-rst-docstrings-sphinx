@@ -167,7 +167,17 @@ class Toolbox(Autodoc):
 	def __init__(self):
 		super().__init__()
 
-		self.roles.update(["wikipedia", "pull", "issue", "asset", "confval", "data", "deco", "regex"])
+		self.roles.update([
+				"wikipedia",
+				"pull",
+				"issue",
+				"asset",
+				"confval",
+				"data",
+				"deco",
+				"regex",
+				"protocol",
+				])
 
 		self.directives.update([
 				"rest-example",
