@@ -2,9 +2,28 @@
 requires = [ "setuptools>=40.6.0", "wheel>=0.34.2",]
 build-backend = "setuptools.build_meta"
 
+[project]
+name = "flake8-rst-docstrings-sphinx"
+version = "0.0.0"
+description = "Extension to flake8-rst-docstrings to filter out warnings related to Sphinx's built in options."
+readme = "README.rst"
+keywords = []
+dynamic = [ "requires-python", "classifiers", "dependencies",]
+[[project.authors]]
+email = "dominic@davis-foster.co.uk"
+name = "Dominic Davis-Foster"
+
 [tool.importcheck]
 always = [
     "flake8_rst_docstrings_sphinx",
     "flake8_rst_docstrings_sphinx.__main__",
     "flake8_rst_docstrings_sphinx.domains",
 ]
+
+[project.license]
+file = "LICENSE"
+
+[project.urls]
+Homepage = "https://github.com/domdfcoding/flake8-rst-docstrings-sphinx"
+"Issue Tracker" = "https://github.com/domdfcoding/flake8-rst-docstrings-sphinx/issues"
+"Source Code" = "https://github.com/domdfcoding/flake8-rst-docstrings-sphinx"
