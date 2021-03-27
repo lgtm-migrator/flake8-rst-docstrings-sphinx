@@ -68,7 +68,7 @@ def compile_options(
 	default_allowed_rst_roles = []
 
 	config = ConfigParser()
-	config.read("tox.ini")
+	config.read("tox.ini", encoding="UTF-8")
 
 	if "flake8" in config:
 		if "rst-directives" in config["flake8"]:
