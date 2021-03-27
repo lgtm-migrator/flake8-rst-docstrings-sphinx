@@ -9,16 +9,11 @@ description = "Extension to flake8-rst-docstrings to filter out warnings related
 readme = "README.rst"
 keywords = []
 dynamic = [ "requires-python", "classifiers", "dependencies",]
+
 [[project.authors]]
 email = "dominic@davis-foster.co.uk"
 name = "Dominic Davis-Foster"
 
-[tool.importcheck]
-always = [
-    "flake8_rst_docstrings_sphinx",
-    "flake8_rst_docstrings_sphinx.__main__",
-    "flake8_rst_docstrings_sphinx.domains",
-]
 
 [project.license]
 file = "LICENSE"
@@ -27,3 +22,10 @@ file = "LICENSE"
 Homepage = "https://github.com/domdfcoding/flake8-rst-docstrings-sphinx"
 "Issue Tracker" = "https://github.com/domdfcoding/flake8-rst-docstrings-sphinx/issues"
 "Source Code" = "https://github.com/domdfcoding/flake8-rst-docstrings-sphinx"
+
+[tool.importcheck]
+always = [
+    "flake8_rst_docstrings_sphinx",
+    "flake8_rst_docstrings_sphinx.__main__",
+    "flake8_rst_docstrings_sphinx.domains",
+]
