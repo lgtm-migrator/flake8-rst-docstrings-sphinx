@@ -9,6 +9,7 @@ username: "domdfcoding"
 license: 'MIT'
 short_desc: "Extension to flake8-rst-docstrings to filter out warnings related to Sphinx's built in options."
 
+use_whey: true
 enable_tests: false
 enable_conda: false
 enable_docs: false
