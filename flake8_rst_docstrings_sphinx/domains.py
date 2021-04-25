@@ -124,7 +124,6 @@ class Builtin(Python, Rest):  # lgtm [py/multiple-calls-to-init]
 				"index",
 				})
 		self.directives.update({
-				"download",
 				"toctree",
 				"note",
 				"warning",
@@ -171,6 +170,11 @@ class Toolbox(Autodoc):
 				"wikipedia",
 				"pull",
 				"issue",
+				"github:issue",
+				"github:pull",
+				"github:repo",
+				"github:user",
+				"github:org",
 				"asset",
 				"confval",
 				"data",
