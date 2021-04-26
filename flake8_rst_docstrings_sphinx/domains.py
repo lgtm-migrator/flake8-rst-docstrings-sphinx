@@ -145,6 +145,7 @@ class Builtin(Python, Rest):  # lgtm [py/multiple-calls-to-init]
 				"tabularcolumns",
 				"math",
 				"productionlist",
+				"rst-class",
 				})
 
 
