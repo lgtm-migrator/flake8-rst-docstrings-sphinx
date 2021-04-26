@@ -20,7 +20,7 @@ flake8-rst-docstrings-sphinx
 	* - Activity
 	  - |commits-latest| |commits-since| |maintained|
 	* - QA
-	  - |codefactor| |actions_flake8| |actions_mypy| |pre_commit_ci|
+	  - |codefactor| |actions_flake8| |actions_mypy|
 	* - Other
 	  - |license| |language| |requires|
 
@@ -69,10 +69,6 @@ flake8-rst-docstrings-sphinx
 
 .. |maintained| image:: https://img.shields.io/maintenance/yes/2021
 	:alt: Maintenance
-
-.. |pre_commit_ci| image:: https://results.pre-commit.ci/badge/github/domdfcoding/flake8-rst-docstrings-sphinx/master.svg
-	:target: https://results.pre-commit.ci/latest/github/domdfcoding/flake8-rst-docstrings-sphinx/master
-	:alt: pre-commit.ci status
 
 .. end shields
 
