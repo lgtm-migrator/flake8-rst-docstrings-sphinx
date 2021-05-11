@@ -190,4 +190,13 @@ class Toolbox(Autodoc):
 				"confval",
 				"pre-commit-shield",
 				"prompt",
+				"samepage",
+				"latex:samepage",
+				"clearpage",
+				"latex:clearpage",
+				"cleardoublepage",
+				"latex:cleardoublepage",
+				"latex:vspace",
+				"code-cell",
+				"output-cell",
 				])
