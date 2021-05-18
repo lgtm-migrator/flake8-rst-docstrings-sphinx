@@ -199,6 +199,6 @@ class Toolbox(Autodoc):
 				"latex:vspace",
 				"code-cell",
 				"output-cell",
-				"autoclasssumm"
-				"automodulesumm"
+				"autoclasssumm",
+				"automodulesumm",
 				])
