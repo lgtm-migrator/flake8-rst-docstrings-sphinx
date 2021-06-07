@@ -182,6 +182,8 @@ class Toolbox(Autodoc):
 				"deco",
 				"regex",
 				"protocol",
+				"iabbr",
+				"bold-title",
 				])
 
 		self.directives.update([
